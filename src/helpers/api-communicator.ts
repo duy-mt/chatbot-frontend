@@ -1,6 +1,6 @@
 import axios from "axios";
 export const loginUser = async (email: string, password: string) => {
-  const res = await axios.post("/user/login", { email, password });
+  const res = await axios.post("/users/login", { email, password });
   if (res.status !== 200) {
     throw new Error("Unable to login");
   }
@@ -13,7 +13,7 @@ export const signupUser = async (
   email: string,
   password: string
 ) => {
-  const res = await axios.post("/user/signup", { name, email, password });
+  const res = await axios.post("/users/signup", { name, email, password });
   if (res.status !== 201) {
     throw new Error("Unable to Signup");
   }
@@ -22,7 +22,7 @@ export const signupUser = async (
 };
 
 export const checkAuthStatus = async () => {
-  const res = await axios.get("/user/auth-status");
+  const res = await axios.get("/users/auth-status");
   if (res.status !== 200) {
     throw new Error("Unable to authenticate");
   }
@@ -31,7 +31,7 @@ export const checkAuthStatus = async () => {
 };
 
 export const sendChatRequest = async (sessionId: string, message: string) => {
-  const res = await axios.post(`/session/${sessionId}/messages`, { message });
+  const res = await axios.post(`/sessions/${sessionId}/messages`, { message });
   if (res.status !== 200) {
     throw new Error("Unable to send chat");
   }
@@ -40,7 +40,7 @@ export const sendChatRequest = async (sessionId: string, message: string) => {
 };
 
 export const getSessionChats = async (sessionId: string) => {
-  const res = await axios.get(`/session/${sessionId}`);
+  const res = await axios.get(`/sessions/${sessionId}`);
   if (res.status !== 200) {
     throw new Error("Unable to send chat");
   }
@@ -49,7 +49,7 @@ export const getSessionChats = async (sessionId: string) => {
 };
 
 export const deleteSessionChat = async (sessionId: string | null) => {
-  const res = await axios.delete(`/session/${sessionId}`);
+  const res = await axios.delete(`/sessions/${sessionId}`);
   if (res.status !== 200) {
     throw new Error("Unable to delete chats");
   }
@@ -58,7 +58,7 @@ export const deleteSessionChat = async (sessionId: string | null) => {
 };
 
 export const logoutUser = async () => {
-  const res = await axios.get("/user/logout");
+  const res = await axios.get("/users/logout");
   if (res.status !== 200) {
     throw new Error("Unable to delete chats");
   }
@@ -67,7 +67,7 @@ export const logoutUser = async () => {
 };
 
 export const createNewSession = async () => {
-  const res = await axios.post("/session/");
+  const res = await axios.post("/sessions/");
   if (res.status !== 200) {
     throw new Error("Unable to delete chats");
   }
@@ -76,7 +76,7 @@ export const createNewSession = async () => {
 };
 
 export const getListSessionbyUser = async () => {
-  const res = await axios.get("/session/users/");
+  const res = await axios.get("/sessions/user");
   if (res.status !== 200) {
     throw new Error("Unable to delete chats");
   }
@@ -84,11 +84,8 @@ export const getListSessionbyUser = async () => {
   return data;
 };
 
-export const updateSessionTitle = async (
-  sessionId: string,
-  message: string
-) => {
-  const res = await axios.patch(`/session/${sessionId}`, { message });
+export const updateSessionTitle = async (sessionId: string, title: string) => {
+  const res = await axios.patch(`/sessions/${sessionId}`, { title });
   if (res.status !== 200) {
     throw new Error("Unable to delete chats");
   }

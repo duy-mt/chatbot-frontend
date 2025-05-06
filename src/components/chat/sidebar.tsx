@@ -19,7 +19,7 @@ import { createNewSession } from "../../helpers/api-communicator";
 import { getListSessionbyUser, deleteSessionChat } from "../../helpers/api-communicator"
 
 interface ChatSession {
-    _id: string;
+    id: string;
     title: string;
 }
 
@@ -35,6 +35,7 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
 
         fetchSessions();
     }, []);
+
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -54,7 +55,7 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
         setAnchorEl(null);
         setSelectedSession(null);
     };
-
+ 
     const handleDelete = () => {
         setIsConfirmDialogOpen(true);
     };
@@ -63,7 +64,7 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
     const confirmDelete = async () => {
         console.log("Delete confirmed for session:", selectedSession);
         // Thực hiện xóa session ở đây
-        setChatSessions((prev) => prev.filter(s => s._id !== selectedSession));
+        setChatSessions((prev) => prev.filter(s => s.id !== selectedSession));
         await deleteSessionChat(selectedSession);
         setIsConfirmDialogOpen(false);
         handleCloseMenu();
@@ -74,17 +75,17 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
         handleCloseMenu();
     };
 
-    const handleAddFolder = () => {
-        console.log("Add folder to session:", selectedSession);
-        handleCloseMenu();
-    };
+    // const handleAddFolder = () => {
+    //     console.log("Add folder to session:", selectedSession);
+    //     handleCloseMenu();
+    // };
 
     const handleNewChatSession = async () => {
         try {
             const newSession = await createNewSession(); // phải chờ kết quả
             if (newSession) {
-                setChatSessions((prev) => [newSession.session, ...prev]); // thêm session mới vào danh sách
-                onSelectSession(newSession.session._id.toString()); // chuyển sang session mới tạo
+                setChatSessions((prev) => [newSession, ...prev]); // thêm session mới vào danh sách
+                onSelectSession(newSession.id.toString()); // chuyển sang session mới tạo
             }
         } catch (error) {
             console.error("Failed to create new session", error);
@@ -122,7 +123,9 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
         >
             {/* Toggle Button and New Chat Button */}
             <Box sx={{ display: "flex", justifyContent: isSidebarOpen ? "space-between" : "center", mb: 2 }}>
-                <IconButton onClick={toggleSidebar} sx={{ color: "white" }}>
+                <IconButton
+                    // onClick={toggleSidebar} 
+                    sx={{ color: "white" }}>
                     <span style={{ fontSize: "20px" }}>☰</span>
                 </IconButton>
 
@@ -152,23 +155,23 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
             <List>
                 {chatSessions.map(session => (
                     <ListItem
-                        key={session._id}
+                        key={session.id}
                         // button
-                        onClick={() => onSelectSession(session._id)}
+                        onClick={() => onSelectSession(session.id)}
                         sx={{
                             borderRadius: 5,
                             px: 2,
-                            bgcolor: session._id === activeSessionId ? "rgba(255,255,255,0.1)" : "transparent",
+                            bgcolor: session.id === activeSessionId ? "rgba(255,255,255,0.1)" : "transparent",
                             "&:hover": {
                                 bgcolor:
-                                    session._id === activeSessionId ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.08)",
+                                    session.id === activeSessionId ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.08)",
                             }
                         }}
                         secondaryAction={
                             isSidebarOpen && (
                                 <IconButton
                                     edge="end"
-                                    onClick={(e) => handleOpenMenu(e, session._id)}
+                                    onClick={(e) => handleOpenMenu(e, session.id)}
                                     sx={{ color: "white" }}
                                 >
                                     {/* <MoreVertIcon /> */}

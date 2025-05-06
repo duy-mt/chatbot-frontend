@@ -21,7 +21,7 @@ const Home = () => {
         <Box>
           <TypingAnim />
         </Box>
-        <Box
+        {/* <Box
           sx={{
             width: "100%",
             display: "flex",
@@ -41,10 +41,10 @@ const Home = () => {
             alt="openai"
             style={{ width: "200px", margin: "auto" }}
           />
-        </Box>
+        </Box> */}
         <Box sx={{ display: "flex", mx: "auto" }}>
           <img
-            src="chat.png"
+            src="nuclear.jpg"
             alt="chatbot"
             style={{
               display: "flex",

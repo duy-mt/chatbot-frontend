@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Box, Avatar, Typography, Button, IconButton } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { Box, Typography, IconButton } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import ChatItem from "../components/chat/ChatItem";
 import { IoMdSend } from "react-icons/io";
@@ -8,7 +8,7 @@ import {
   createNewSession,
   getSessionChats,
   sendChatRequest,
-  updateSessionTitle,
+  updateSessionTitle
 } from "../helpers/api-communicator";
 import toast from "react-hot-toast";
 import SidebarComponent from "../components/chat/sidebar";
@@ -40,27 +40,30 @@ const Chat = () => {
 
       if (!sessionId) {
         const newSession = await createNewSession();
-        sessionId = newSession.session._id;
+        console.log("newSession: ", newSession)
+        sessionId = newSession.id;
         setSelectedSessionId(sessionId);
         chatData = await sendChatRequest(sessionId, content);
 
-        if (chatData.chats.length !== 0) {
-          const firstMessage = chatData.chats[0].content;
-          const title = firstMessage.length > 50 ? firstMessage.slice(0, 50) + "..." : firstMessage;
+        if (chatData.length !== 0) {
+          const firstMessage = chatData[0]?.content;
+          const title = firstMessage?.length > 50 ? firstMessage.slice(0, 50) + "..." : firstMessage;
           await updateSessionTitle(sessionId, title);
         }
       } else {
-        chatData = await sendChatRequest(selectedSessionId, content);
-        if (chatData.chats.length !== 0) {
-          const firstMessage = chatData.chats[0].content;
-          const title = firstMessage.length > 50 ? firstMessage.slice(0, 50) + "..." : firstMessage;
-          await updateSessionTitle(sessionId, title);
+        chatData = await sendChatRequest(sessionId, content);
+        if (chatData.length !== 0) {
+          const firstMessage = chatData[0]?.content;
+          const title = firstMessage?.length > 50 ? firstMessage.slice(0, 50) + "..." : firstMessage;
+          const sessionChats = await getSessionChats(sessionId)
+          if (sessionChats.title == "New Chat")
+            await updateSessionTitle(sessionId, title);
         }
       }
-      setChatMessages([...chatData.chats]);
+      setChatMessages([...chatData]);
     } catch (error) {
-      toast.error("Failed to send message");
       console.log(error);
+      toast.error("Failed to send message");
     }
   };
 
@@ -69,6 +72,7 @@ const Chat = () => {
     setActiveSessionId(sessionId);
     try {
       toast.loading('Loading Session Chats', { id: "loadsession" });
+      console.log('sessionId', sessionId)
       const sessionChats = await getSessionChats(sessionId)
       setChatMessages(sessionChats.chats)
       toast.success('Loading session chats', { id: "loadsession" });
