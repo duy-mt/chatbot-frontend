@@ -18,7 +18,7 @@ type Message = {
 };
 const Chat = () => {
   const navigate = useNavigate();
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const auth = useAuth();
 
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
@@ -28,6 +28,12 @@ const Chat = () => {
 
   const handleSubmit = async () => {
     const content = inputRef.current?.value as string;
+
+    if (!content.trim()) {
+      toast.error("Message cannot be empty");
+      return; // Dừng lại nếu không có nội dung
+    }
+
     if (inputRef && inputRef.current) {
       inputRef.current.value = "";
     }
@@ -81,6 +87,16 @@ const Chat = () => {
       toast.error('Failed to load session chats', { id: "loadsession" })
     }
   }
+
+
+  //input handle
+
+  // const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  //   if (e.key === "Enter" && !e.shiftKey) {
+  //     e.preventDefault(); // ngăn xuống dòng
+  //     handleSubmit(); // gửi tin nhắn
+  //   }
+  // }
 
   // const handleDeleteChats = async () => {
   //   try {
@@ -192,22 +208,31 @@ const Chat = () => {
             borderRadius: 8,
             backgroundColor: "rgb(17,27,39)",
             display: "flex",
-            // margin: ,
-            // top: 10
           }}
         >
-          {" "}
-          <input
+          <textarea
             ref={inputRef}
-            type="text"
+            rows={1}
+            onInput={(e) => {
+              const target = e.target as HTMLTextAreaElement
+              target.style.height = "auto"
+              target.style.height = Math.min(target.scrollHeight, 60) + "px"
+            }}
+            placeholder="Nhập tin nhắn..."
             style={{
               width: "100%",
               backgroundColor: "transparent",
-              padding: "30px",
+              padding: "20px",
               border: "none",
               outline: "none",
               color: "white",
-              fontSize: "20px",
+              fontSize: "18px",
+              resize: "none", // ngăn kéo giãn thủ công
+              maxHeight: "300px", // tối đa 300px
+              overflowY: "auto",  // hiện thanh cuộn nếu vượt quá
+
+              //scrollbar tuy chinh
+              scrollbarWidth: "thin"
             }}
           />
           <IconButton onClick={handleSubmit} sx={{ color: "white", mx: 1 }}>
