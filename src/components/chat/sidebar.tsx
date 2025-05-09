@@ -36,17 +36,19 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
         fetchSessions();
     }, []);
 
-
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen,
+        // setIsSidebarOpen
+    ] = useState(true);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [selectedSession, setSelectedSession] = useState<string | null>(null);
 
     //state dialog delete
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
-    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+    // const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, id: string) => {
+        event.stopPropagation();  // Ngừng sự kiện click khi nhấn vào icon xóa
         setAnchorEl(event.currentTarget);
         setSelectedSession(id);
     };
@@ -55,7 +57,7 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
         setAnchorEl(null);
         setSelectedSession(null);
     };
- 
+
     const handleDelete = () => {
         setIsConfirmDialogOpen(true);
     };
@@ -74,11 +76,6 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
         setIsConfirmDialogOpen(false);
         handleCloseMenu();
     };
-
-    // const handleAddFolder = () => {
-    //     console.log("Add folder to session:", selectedSession);
-    //     handleCloseMenu();
-    // };
 
     const handleNewChatSession = async () => {
         try {
@@ -125,7 +122,7 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
             <Box sx={{ display: "flex", justifyContent: isSidebarOpen ? "space-between" : "center", mb: 2 }}>
                 <IconButton
                     // onClick={toggleSidebar} 
-                    sx={{ color: "white" }}>
+                    sx={{ color: "white" }} >
                     <span style={{ fontSize: "20px" }}>☰</span>
                 </IconButton>
 
@@ -156,25 +153,22 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
                 {chatSessions.map(session => (
                     <ListItem
                         key={session.id}
-                        // button
-                        onClick={() => onSelectSession(session.id)}
+                        onClick={() => onSelectSession(session.id)} // Chỉ chọn session nếu không nhấn vào icon
                         sx={{
                             borderRadius: 5,
                             px: 2,
                             bgcolor: session.id === activeSessionId ? "rgba(255,255,255,0.1)" : "transparent",
                             "&:hover": {
-                                bgcolor:
-                                    session.id === activeSessionId ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.08)",
+                                bgcolor: session.id === activeSessionId ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.08)",
                             }
                         }}
                         secondaryAction={
                             isSidebarOpen && (
                                 <IconButton
                                     edge="end"
-                                    onClick={(e) => handleOpenMenu(e, session.id)}
+                                    onClick={(e) => handleOpenMenu(e, session.id)} // Chỉ gọi menu khi nhấn vào icon
                                     sx={{ color: "white" }}
                                 >
-                                    {/* <MoreVertIcon /> */}
                                     <span style={{ fontSize: "20px" }}>⋮</span>
                                 </IconButton>
                             )
@@ -189,6 +183,7 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
                     </ListItem>
                 ))}
             </List>
+
             {/* Menu */}
             <Menu
                 anchorEl={anchorEl}
@@ -202,13 +197,13 @@ const SidebarComponent = ({ onSelectSession, activeSessionId }: { onSelectSessio
                 }}
             >
                 <MenuItem onClick={handleDelete}>Delete</MenuItem>
-                {/* <MenuItem onClick={handleAddFolder}>Add folder</MenuItem> */}
             </Menu>
+
             <Dialog
                 open={isConfirmDialogOpen}
                 onClose={cancelDelete}
             >
-                <DialogTitle>Xác nhận xoá</DialogTitle>
+                <DialogTitle>Comfirm to delete</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Are you sure you want to delete this chat session? This action cannot be undone.
